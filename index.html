@@ -7,7 +7,9 @@
     <title>Document</title>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js" integrity="sha512-0bEtK0USNd96MnO4XhH8jhv3nyRF0eK87pJke6pkYf3cM0uDIhNJy9ltuzqgypoIFXw3JSuiy04tVk4AjpZdZw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"
+        integrity="sha512-0bEtK0USNd96MnO4XhH8jhv3nyRF0eK87pJke6pkYf3cM0uDIhNJy9ltuzqgypoIFXw3JSuiy04tVk4AjpZdZw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="js/eval-calc.js"></script>
     <script src="js/leader-line.min.js"></script>
     <style>
@@ -333,13 +335,15 @@
                     new TableCel('00').select()
                 }
             })
-            $("td").on("pointerenter", function () {
-                if (dragging === true) {
-                    let positionId = String($(this).data("positionId"))
+            $("td").on("pointermove", function () {
+                $("td").on("pointerenter", function () {
+                    if (dragging === true) {
+                        let positionId = String($(this).data("positionId"))
 
-                    new TableCel(positionId).select()
-                    table.variable_update()
-                }
+                        new TableCel(positionId).select()
+                        table.variable_update()
+                    }
+                })
             })
 
             $("td").on("pointerup", function () {
