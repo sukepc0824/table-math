@@ -327,7 +327,7 @@
             table.create()
 
             let dragging;
-            $("td").on("mousedown", function () {
+            $("td").on("mousedown touchstart", function () {
                 if ($(this).data("positionId") === '00') {
                     dragging = true
                     new TableCel('00').select()
@@ -342,7 +342,7 @@
                 }
             })
 
-            $("td").on("mouseup", function () {
+            $("td").on("mouseup touchend", function () {
                 dragging = false
                 if ($(this).hasClass("goal")) {
                     table.goal()
