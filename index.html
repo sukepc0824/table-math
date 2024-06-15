@@ -339,7 +339,7 @@
                     new TableCel('00').select()
                 }
             })
-            $("td").on("pointermove", function () {
+            $("td").on("touchmove", function () {
                 if (dragging === true) {
                     if ($(this).hasClass("enter")) {
 
@@ -348,7 +348,7 @@
                             $("td").removeClass("enter")
                         }
                         $(this).addClass("enter")
-                        
+
                         let positionId = String($(".enter").data("positionId"))
                         new TableCel(positionId).select()
                         table.variable_update()
