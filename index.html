@@ -1,1 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="js/eval-calc.js"></script>
+    <script src="js/leader-line.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Inter:wght@100..900&display=swap');
+
+        body {
+            width: 100%;
+            height: 100%;
+            margin: auto;
+            position: fixed;
+            background: #f3f3f3;
+            font-family: "DM Mono", sans-serif;
+            color: #222;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            user-select: none !important;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        table caption {
+            font-size: 66px;
+            font-weight: 400;
+            margin-bottom: 20px;
+        }
+
+        table caption span {
+            display: inline-block;
+        }
+
+        table caption span.addition-hide {
+            animation: addition-hide 0.08s ease-in forwards !important;
+        }
+
+        table caption span.addition-show {
+            animation: addition-show 0.08s ease-in forwards;
+        }
+
+        table caption span.reduction-hide {
+            animation: reduction-hide 0.08s ease-in forwards !important;
+        }
+
+        table caption span.reduction-show {
+            animation: reduction-show 0.08s ease-in forwards;
+        }
+
+        table caption.fail {
+            animation: fail 0.7s ease-out forwards !important;
+        }
+
+        @keyframes addition-hide {
+            0% {
+                transform: translateY(0px);
+            }
+
+            100% {
+                transform: translateY(10px);
+                filter: blur(7px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes addition-show {
+            0% {
+                transform: translateY(-10px);
+                filter: blur(7px);
+                opacity: 0;
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        @keyframes reduction-hide {
+            0% {
+                transform: translateY(0px);
+            }
+
+            100% {
+                transform: translateY(-10px);
+                filter: blur(7px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes reduction-show {
+            0% {
+                transform: translateY(10px);
+                filter: blur(7px);
+                opacity: 0;
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        @keyframes fail {
+            0% {
+                transform: translateX(0px);
+            }
+
+            10% {
+                transform: translateX(-30px);
+            }
+
+            22% {
+                transform: translateX(30px);
+            }
+
+            30% {
+                transform: translateX(-15px);
+            }
+
+            40% {
+                transform: translateX(15px);
+            }
+
+            50% {
+                transform: translateX(-0px);
+            }
+
+            100% {}
+        }
+
+
+        table td {
+            position: relative;
+            width: 100px;
+            height: 100px;
+        }
+
+        td p {
+            z-index: 100;
+            margin: 0;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            letter-spacing: 3px;
+            font-size: 26px;
+            color: #aaa;
+            text-align: center;
+            transform: translate(-50%, -50%);
+        }
+
+        td::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 94px;
+            height: 94px;
+            background-color: white;
+            border-radius: 6px;
+        }
+
+        td.goal::before {
+            background-color: #dcdcdc;
+        }
+
+        td.select:before {
+            background-color: #ff8000;
+        }
+
+        td.select p {
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <table>
+        <caption>
+            <span>0</span>
+        </caption>
+        <tbody>
+        </tbody>
+    </table>
+    <script>
+        $(function () {
+            let selected = []
+            function lastSlected() {
+                if (selected[selected.length - 1] != undefined) {
+                    return selected[selected.length - 1]
+                } else {
+                    return { calc_variable: 0 }
+                }
+            }
+            class Table {
+                constructor(table_data, goal_value) {
+                    this.table_data = table_data
+                    this.goal_value = goal_value
+                }
+                create() {
+                    this.table_data.forEach((array, parent_index) => {
+                        $(`<tr data-y="${parent_index}"></tr>`).appendTo("tbody")
+                        array.forEach((value, child_index) => {
+                            let calc_text = value.replace("*", '×').replace("/", '÷')
+                            $(`<td data-position-x=${child_index} 
+                                    data-position-y=${parent_index} 
+                                    data-position-id=${String(child_index) + String(parent_index)}
+                                    data-calc="${value}">
+                                    <p>${calc_text}</p>
+                                </td>`).appendTo(`tr[data-y="${parent_index}"]`)
+                            if (value.includes("=")) {
+                                $(`td[data-calc="${value}"]`).addClass('goal')
+                            }
+                        })
+                    })
+                }
+
+                variable_update(noAnimation) {
+                    if (noAnimation === true) {
+                        $("caption").empty()
+                        $(`<span>0</span>`).appendTo("caption")
+                        return false
+                    }
+                    if (lastSlected().calc_variable > selected[selected.length - 2].calc_variable) {
+                        $("caption span").each(function (index) {
+                            $(this).addClass("addition-hide")
+                        })
+                        setTimeout(() => {
+                            $("caption span").remove();
+                            ((String(lastSlected().calc_variable)).split("")).forEach((value, index) => {
+                                $(`<span data-digit=${index}>${value}</span>`).appendTo("caption")
+                                    .addClass("addition-show")
+
+                            })
+                        }, 100);
+                    }
+                    if (lastSlected().calc_variable < selected[selected.length - 2].calc_variable) {
+                        $("caption span").each(function (index) {
+                            $(this).addClass("reduction-hide")
+                        })
+                        setTimeout(() => {
+                            $("caption span").remove();
+                            ((String(lastSlected().calc_variable)).split("")).forEach((value, index) => {
+                                $(`<span data-digit=${index}>${value}</span>`).appendTo("caption")
+                                    .addClass("reduction-show")
+
+                            })
+                        }, 100);
+                    }
+                }
+
+                reset() {
+                    $("td").removeClass("select")
+                    selected.push({ calc_variable: 0 })
+                    this.variable_update()
+                    selected = []
+                }
+
+                fail() {
+                    $("td").removeClass("select")
+                    $("table caption").addClass("fail")
+                    setTimeout(() => {
+                        $("table caption").removeClass("fail")
+                    }, 500);
+                    this.variable_update(true)
+                    selected = []
+                }
+
+                goal() {
+                    if (this.goal_value == lastSlected().calc_variable) {
+                        console.log('!')
+                    } else {
+                        this.fail()
+                    }
+                }
+            }
+
+            class TableCel {
+                constructor(id) {
+                    this.id = id
+                }
+                select() {
+                    $(`td[data-position-id= "${this.id}"]`).addClass("select")
+                    if (selected.map(obj => obj.id).includes(this.id)) {
+                        selected.slice(selected.map(obj => obj.id).indexOf(this.id) + 1).forEach(value => {
+                            new TableCel(value.id).blur()
+                        })
+                        selected.splice(selected.map(obj => obj.id).indexOf(this.id) + 1)
+                    } else {
+                        if ($(`td[data-position-id="${this.id}"]`).hasClass("goal")) {
+                            selected.push({
+                                id: this.id,
+                                calc_variable: evalCalculation(`${lastSlected().calc_variable}`)
+                            })
+                        } else {
+                            selected.push({
+                                id: this.id,
+                                calc_variable: evalCalculation(`${lastSlected().calc_variable}${$(`td[data-position-id="${this.id}"]`).data("calc")}`)
+                            })
+                        }
+                    }
+                }
+
+                blur() {
+                    $(`td[data-position-id= "${this.id}"]`).removeClass("select")
+                }
+            }
+
+            let table = new Table(
+                [
+                    ['', '+1', '', '=5'],
+                    ['', '', '+4', ''],
+                    ['*3', '', '', '/2'],
+                    ['', '*2', '', ''],
+                ], 5
+            )
+
+            table.create()
+
+            let dragging;
+            $("td").on("mousedown", function () {
+                if ($(this).data("positionId") === '00') {
+                    dragging = true
+                    new TableCel('00').select()
+                }
+            })
+            $("td").on("mouseenter", function () {
+                if (dragging === true) {
+                    let positionId = String($(this).data("positionId"))
+
+                    new TableCel(positionId).select()
+                    table.variable_update()
+                }
+            })
+
+            $("td").on("mouseup", function () {
+                dragging = false
+                if ($(this).hasClass("goal")) {
+                    table.goal()
+                } else {
+                    table.reset()
+                }
+            })
+
+        })
+    </script>
+</body>
+
+</html>
