@@ -182,6 +182,10 @@
         td.select p {
             color: white;
         }
+
+        td.enter {
+            background-color: #222;
+        }
     </style>
 </head>
 
@@ -336,14 +340,20 @@
                 }
             })
             $("td").on("pointermove", function () {
-                $("td").on("pointerenter", function () {
-                    if (dragging === true) {
-                        let positionId = String($(this).data("positionId"))
+                if (dragging === true) {
+                    if ($(this).hasClass("enter")) {
 
+                    } else {
+                        if ($(".enter").length = 1) {
+                            $("td").removeClass("enter")
+                        }
+                        $(this).addClass("enter")
+                        
+                        let positionId = String($(".enter").data("positionId"))
                         new TableCel(positionId).select()
                         table.variable_update()
                     }
-                })
+                }
             })
 
             $("td").on("pointerup", function () {
