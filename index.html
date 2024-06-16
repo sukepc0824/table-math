@@ -32,8 +32,6 @@
             padding: 0;
             position: fixed;
             display: flex;
-            align-items: center;
-            justify-content: center;
             flex-direction: column;
             width: 100%;
             max-width: 100%;
@@ -42,7 +40,6 @@
             background: #f3f3f3;
             font-family: "DM Mono", sans-serif;
             color: #222;
-            justify-content: center;
             align-items: center;
             user-select: none !important;
             border: none !important;
@@ -51,19 +48,17 @@
             transition: all 0.2s ease-out;
         }
 
-        dialog{
+        dialog {
             bottom: -100%;
             opacity: 0;
         }
-        
-        dialog[open]{
+
+        dialog[open] {
             bottom: 0;
             opacity: 1;
         }
 
         .dialog-menu {
-            position: absolute;
-            top:0;
             max-width: 470px;
             width: 100%;
             z-index: 100;
@@ -76,7 +71,7 @@
             font-weight: 600;
             font-size: 31px;
         }
-        
+
         .dialog-menu button {
             margin: 10px;
         }
@@ -85,12 +80,17 @@
             filter: brightness(0%);
         }
 
+        .show-panel {
+            height: fit-content;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+        }
+
         .action {
             max-width: 420px;
-            position: absolute;
             padding: 0;
             width: 100%;
-            bottom: 36px;
             display: flex;
             justify-content: center;
         }
@@ -98,36 +98,37 @@
         table {
             margin: auto;
             border-collapse: collapse;
+            margin-bottom: 42px;
         }
 
-        table caption {
+        .show-panel {
             font-size: 66px;
             font-weight: 400;
             margin-bottom: 20px;
             text-align: center;
         }
 
-        table caption span {
+        .show-panel span {
             display: inline-block;
         }
 
-        table caption span.addition-hide {
+        .show-panel span.addition-hide {
             animation: addition-hide 0.08s ease-in forwards !important;
         }
 
-        table caption span.addition-show {
+        .show-panel span.addition-show {
             animation: addition-show 0.08s ease-in forwards;
         }
 
-        table caption span.reduction-hide {
+        .show-panel span.reduction-hide {
             animation: reduction-hide 0.08s ease-in forwards !important;
         }
 
-        table caption span.reduction-show {
+        .show-panel span.reduction-show {
             animation: reduction-show 0.08s ease-in forwards;
         }
 
-        table caption.fail {
+        .show-panel.fail {
             animation: fail 0.7s ease-out forwards !important;
         }
 
@@ -281,7 +282,6 @@
             height: 60px;
             background-color: white;
         }
-
     </style>
 </head>
 
@@ -297,14 +297,14 @@
                 </button>
             </form>
         </div>
-        <div class="action">
-            <table>
-                <caption>
-                    <span>0</span>
-                </caption>
-                <tbody>
-                </tbody>
-            </table>
+        <div class="show-panel">
+            <span>0</span>
+        </div>
+        <table>
+
+            <tbody>
+            </tbody>
+        </table>
         </div>
     </dialog>
     <main>
@@ -363,31 +363,31 @@
 
                 variable_update(noAnimation) {
                     if (noAnimation === true) {
-                        $("caption").empty()
-                        $(`<span>0</span>`).appendTo("caption")
+                        $(".show-panel").empty()
+                        $(`<span>0</span>`).appendTo(".show-panel")
                         return false
                     }
                     if (calc_values[calc_values.length - 1] > calc_values[calc_values.length - 2]) {
-                        $("caption span").each(function (index) {
+                        $(".show-panel span").each(function (index) {
                             $(this).addClass("addition-hide")
                         })
                         setTimeout(() => {
-                            $("caption span").remove();
+                            $(".show-panel span").remove();
                             ((String(lastSlected().calc_variable)).split("")).forEach((value, index) => {
-                                $(`<span data-digit=${index}>${value}</span>`).appendTo("caption")
+                                $(`<span data-digit=${index}>${value}</span>`).appendTo(".show-panel")
                                     .addClass("addition-show")
 
                             })
                         }, 100);
                     }
                     if (calc_values[calc_values.length - 1] < calc_values[calc_values.length - 2]) {
-                        $("caption span").each(function (index) {
+                        $(".show-panel span").each(function (index) {
                             $(this).addClass("reduction-hide")
                         })
                         setTimeout(() => {
-                            $("caption span").remove();
+                            $(".show-panel span").remove();
                             ((String(lastSlected().calc_variable)).split("")).forEach((value, index) => {
-                                $(`<span data-digit=${index}>${value}</span>`).appendTo("caption")
+                                $(`<span data-digit=${index}>${value}</span>`).appendTo(".show-panel")
                                     .addClass("reduction-show")
 
                             })
@@ -406,9 +406,9 @@
                 fail() {
                     window.navigator.vibrate(100);
                     $("td").removeClass("select")
-                    $("table caption").addClass("fail")
+                    $(".show-panel").addClass("fail")
                     setTimeout(() => {
-                        $("table caption").removeClass("fail")
+                        $(".show-panel").removeClass("fail")
                     }, 500);
                     this.variable_update(true)
                     selected = []
