@@ -350,10 +350,9 @@
                     console.log(selected);
                 }
             })*/
-            $("td").on("pointerenter", function (event) {
+            $("td").on("pointermove", function (event) {
                 if (dragging === true) {
                     let target = $(document.elementFromPoint(event.clientX, event.clientY));
-
                     if (target.hasClass("enter")) {
 
                     } else {
