@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 
 <head>
     <meta charset="UTF-8">
@@ -7,11 +7,9 @@
     <title>Document</title>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"
-        integrity="sha512-0bEtK0USNd96MnO4XhH8jhv3nyRF0eK87pJke6pkYf3cM0uDIhNJy9ltuzqgypoIFXw3JSuiy04tVk4AjpZdZw=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="js/eval-calc.js"></script>
-    <script src="js/leader-line.min.js"></script>
+    <script src="js/stage.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/destyle.css@1.0.15/destyle.css" />
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Inter:wght@100..900&display=swap');
 
@@ -19,18 +17,87 @@
             overscroll-behavior-y: none;
             width: 100%;
             height: 100%;
-            margin: auto;
-            position: fixed;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             background: #f3f3f3;
             font-family: "DM Mono", sans-serif;
             color: #222;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             user-select: none !important;
         }
 
+        main {}
+
+        dialog {
+            padding: 0;
+            position: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            width: 100%;
+            max-width: 100%;
+            height: 100%;
+            max-height: 100%;
+            background: #f3f3f3;
+            font-family: "DM Mono", sans-serif;
+            color: #222;
+            justify-content: center;
+            align-items: center;
+            user-select: none !important;
+            border: none !important;
+            outline: none !important;
+            overflow: hidden;
+            transition: all 0.2s ease-out;
+        }
+
+        dialog{
+            bottom: -100%;
+            opacity: 0;
+        }
+        
+        dialog[open]{
+            bottom: 0;
+            opacity: 1;
+        }
+
+        .dialog-menu {
+            position: absolute;
+            top:0;
+            max-width: 470px;
+            width: 100%;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: end;
+        }
+
+        .dialog-menu h2 {
+            font-weight: 600;
+            font-size: 31px;
+        }
+        
+        .dialog-menu button {
+            margin: 10px;
+        }
+
+        .dialog-menu button:hover {
+            filter: brightness(0%);
+        }
+
+        .action {
+            max-width: 420px;
+            position: relative;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
         table {
+            margin: auto;
             border-collapse: collapse;
         }
 
@@ -38,6 +105,7 @@
             font-size: 66px;
             font-weight: 400;
             margin-bottom: 20px;
+            text-align: center;
         }
 
         table caption span {
@@ -143,8 +211,8 @@
 
         table td {
             position: relative;
-            width: 100px;
-            height: 100px;
+            width: 92px;
+            height: 92px;
         }
 
         td p {
@@ -167,8 +235,8 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 94px;
-            height: 94px;
+            width: 86px;
+            height: 86px;
             background-color: white;
             border-radius: 6px;
         }
@@ -188,6 +256,33 @@
         td.enter {
             background-color: #222;
         }
+
+        main {
+            width: 100%;
+            max-width: 500px;
+            padding: 10px;
+            color: #222;
+        }
+
+        .container {
+            display: flex;
+            gap: 4px;
+        }
+
+        .menu p {
+            margin: 6px 0;
+            margin-top: 40px;
+        }
+
+        main button {
+            width: 25%;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 20px;
+            height: 60px;
+            background-color: white;
+        }
+
     </style>
 </head>
 
@@ -195,16 +290,45 @@
     <audio class="select" preload=”auto”>
         <source src="sounds/select.mp3" type="audio/mp3">
     </audio>
-    <table>
-        <caption>
-            <span>0</span>
-        </caption>
-        <tbody>
-        </tbody>
-    </table>
+    <dialog>
+        <div class="dialog-menu">
+            <form method="dialog">
+                <button>
+                    <img src="img/icon/close.svg" alt="">
+                </button>
+            </form>
+        </div>
+        <div class="action">
+            <table>
+                <caption>
+                    <span>0</span>
+                </caption>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </dialog>
+    <main>
+        <div class="menu">
+            <p>LEVEL 1 (+)</p>
+            <div class="container" data-level="1">
+            </div>
+            <p>LEVEL 2 (+,-)</p>
+            <div class="container" data-level="2">
+            </div>
+            <p>LEVEL 3 (+,-,×)</p>
+            <div class="container" data-level="3">
+            </div>
+            <p>LEVEL 4 (+,-,×,÷)</p>
+            <div class="container" data-level="3">
+            </div>
+        </div>
+    </main>
     <script>
         $(function () {
             let selected = []
+            let calc_values = []
+
             function lastSlected() {
                 if (selected[selected.length - 1] != undefined) {
                     return selected[selected.length - 1]
@@ -215,9 +339,11 @@
             class Table {
                 constructor(table_data, goal_value) {
                     this.table_data = table_data
-                    this.goal_value = goal_value
+                    this.goal_value = 0
                 }
                 create() {
+                    $("dialog")[0].showModal()
+                    $("tbody").empty()
                     this.table_data.forEach((array, parent_index) => {
                         $(`<tr data-y="${parent_index}"></tr>`).appendTo("tbody")
                         array.forEach((value, child_index) => {
@@ -230,6 +356,7 @@
                                 </td>`).appendTo(`tr[data-y="${parent_index}"]`)
                             if (value.includes("=")) {
                                 $(`td[data-calc="${value}"]`).addClass('goal')
+                                this.goal_value = value.replace("=", "")
                             }
                         })
                     })
@@ -241,7 +368,7 @@
                         $(`<span>0</span>`).appendTo("caption")
                         return false
                     }
-                    if (lastSlected().calc_variable > selected[selected.length - 2].calc_variable) {
+                    if (calc_values[calc_values.length - 1] > calc_values[calc_values.length - 2]) {
                         $("caption span").each(function (index) {
                             $(this).addClass("addition-hide")
                         })
@@ -254,7 +381,7 @@
                             })
                         }, 100);
                     }
-                    if (lastSlected().calc_variable < selected[selected.length - 2].calc_variable) {
+                    if (calc_values[calc_values.length - 1] < calc_values[calc_values.length - 2]) {
                         $("caption span").each(function (index) {
                             $(this).addClass("reduction-hide")
                         })
@@ -272,9 +399,9 @@
                 reset() {
                     $("td").removeClass("enter")
                     $("td").removeClass("select")
-                    selected.push({ calc_variable: 0 })
+                    selected = [{ calc_variable: 0 }]
+                    calc_values.push(0)
                     this.variable_update()
-                    selected = []
                 }
 
                 fail() {
@@ -322,6 +449,7 @@
                             })
                         }
                     }
+                    calc_values.push(lastSlected().calc_variable)
                 }
 
                 blur() {
@@ -329,19 +457,9 @@
                 }
             }
 
-            let table = new Table(
-                [
-                    ['', '+1', '+1', '=5'],
-                    ['', '', '+4', ''],
-                    ['*3', '', '', '/2'],
-                    ['', '*2', '', ''],
-                ], 5
-            )
-            table.create()
-
             let dragging;
             let dragging_elements = []
-            $("td").on("pointerdown", function () {
+            $(document).on("pointerdown", "td", function () {
                 if ($(this).data("positionId") === '00') {
                     dragging_elements.push("00")
                     new TableCel("00").select();
@@ -349,15 +467,7 @@
 
                 }
             })
-            /*$("td").on("mouseenter", function () {
-                if (dragging === true) {
-                    let positionId = String($(this).data("positionId"));
-                    new TableCel(positionId).select();
-                    table.variable_update();
-                    console.log(selected);
-                }
-            })*/
-            $("td").on("mousemove", function (event) {
+            $(document).on("mousemove", "td", function (event) {
                 if (dragging === true) {
                     let target = $(document.elementFromPoint(event.clientX, event.clientY));
                     dragging_elements.push(String(target.data("positionId")))
@@ -370,7 +480,7 @@
 
                 }
             })
-            $("td").on("touchmove", function (event) {
+            $(document).on("touchmove", "td", function (event) {
                 if (dragging === true) {
                     let target = $(document.elementFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY));
                     dragging_elements.push(String(target.data("positionId")))
@@ -384,7 +494,7 @@
                 }
             })
 
-            $("td").on("mouseup", function () {
+            $(document).on("mouseup", "td", function () {
                 dragging = false
                 let dragging_elements = []
                 if ($(this).hasClass("goal")) {
@@ -393,7 +503,7 @@
                     table.reset()
                 }
             })
-            $("td").on("touchend", function () {
+            $(document).on("touchend", "td", function () {
                 dragging = false
                 let dragging_elements = []
                 let target = $(document.elementFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY));
@@ -402,6 +512,18 @@
                 } else {
                     table.reset()
                 }
+            })
+
+
+            stages.forEach((value, index) => {
+                $(`<button class="gamestart" value="${value.goal}">=${value.goal}</button>`).appendTo(`.container[data-level=${value.level}]`)
+            })
+
+            $(`button.gamestart`).on("click", function () {
+                table = new Table(
+                    stages[$(this).val() - 1].table
+                )
+                table.create()
             })
 
         })
