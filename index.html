@@ -265,6 +265,7 @@
                 }
 
                 reset() {
+                    $("td").removeClass("enter")
                     $("td").removeClass("select")
                     selected.push({ calc_variable: 0 })
                     this.variable_update()
@@ -308,6 +309,7 @@
                                 calc_variable: evalCalculation(`${lastSlected().calc_variable}`)
                             })
                         } else {
+                            console.log($(`td[data-position-id="${this.id}"]`).data("calc"))
                             selected.push({
                                 id: this.id,
                                 calc_variable: evalCalculation(`${lastSlected().calc_variable}${$(`td[data-position-id="${this.id}"]`).data("calc")}`)
@@ -323,7 +325,7 @@
 
             let table = new Table(
                 [
-                    ['', '+1', '', '=5'],
+                    ['', '+1', '+1', '=5'],
                     ['', '', '+4', ''],
                     ['*3', '', '', '/2'],
                     ['', '*2', '', ''],
@@ -336,22 +338,34 @@
             $("td").on("pointerdown", function () {
                 if ($(this).data("positionId") === '00') {
                     dragging = true
-                    new TableCel('00').select()
+                    new TableCel("00").select()
+
                 }
             })
-            $("td").on("touchmove", function () {
+            /*$("td").on("mouseenter", function () {
                 if (dragging === true) {
-                    if ($(this).hasClass("enter")) {
+                    let positionId = String($(this).data("positionId"));
+                    new TableCel(positionId).select();
+                    table.variable_update();
+                    console.log(selected);
+                }
+            })*/
+            $("td").on("pointerenter", function (event) {
+                if (dragging === true) {
+                    let target = $(document.elementFromPoint(event.clientX, event.clientY));
+
+                    if (target.hasClass("enter")) {
 
                     } else {
-                        if ($(".enter").length = 1) {
+                        if ($(".enter").length >= 1) {
                             $("td").removeClass("enter")
                         }
-                        $(this).addClass("enter")
+                        target.addClass("enter")
 
-                        let positionId = String($(".enter").data("positionId"))
+                        let positionId = String(target.data("positionId"))
                         new TableCel(positionId).select()
                         table.variable_update()
+                        console.log(selected)
                     }
                 }
             })
