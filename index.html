@@ -78,28 +78,31 @@
 
         .dialog-menu button:hover {
             filter: brightness(0%);
-        }   
+        }
 
         .show-panel {
-            width: 340px;
-            height: fit-content;
             flex-grow: 1;
+            width: 100%;
+            height: fit-content;
             display: flex;
             align-items: end;
             justify-content: end;
             color: #444;
             font-size: 66px;
             font-weight: 400;
+            padding: 6px;
             margin-bottom: 20px;
             text-align: right;
         }
 
         .action {
-            max-width: 420px;
+            flex-grow: 1;
+            max-width: 370px;
             padding: 0;
             width: 100%;
             display: flex;
             justify-content: center;
+            flex-direction: column;
         }
 
         table {
@@ -267,6 +270,7 @@
         .container {
             display: flex;
             gap: 4px;
+            flex-wrap: wrap;
         }
 
         .menu p {
@@ -275,7 +279,7 @@
         }
 
         main button {
-            width: 25%;
+            width: calc(50% - 3px);
             border-radius: 12px;
             text-align: center;
             font-size: 20px;
@@ -297,14 +301,15 @@
                 </button>
             </form>
         </div>
-        <div class="show-panel">
-            <span>0</span>
+        <div class="action">
+            <div class="show-panel">
+                <span>0</span>
+            </div>
+            <table>
+                <tbody>
+                </tbody>
+            </table>
         </div>
-        <table>
-
-            <tbody>
-            </tbody>
-        </table>
         </div>
     </dialog>
     <main>
@@ -416,7 +421,7 @@
 
                 goal() {
                     if (this.goal_value == lastSlected().calc_variable) {
-                        console.log('!')
+    
                     } else {
                         this.fail()
                     }
