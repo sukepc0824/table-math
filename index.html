@@ -157,6 +157,7 @@
             color: #aaa;
             text-align: center;
             transform: translate(-50%, -50%);
+            pointer-events: none;
         }
 
         td::before {
@@ -335,42 +336,40 @@
             table.create()
 
             let dragging;
+            let dragging_elements = []
             $("td").on("pointerdown", function () {
                 if ($(this).data("positionId") === '00') {
+                    dragging_elements.push("00")
+                    new TableCel("00").select();
                     dragging = true
-                    new TableCel("00").select()
 
                 }
             })
-            /*$("td").on("mouseenter", function () {
+            $("td").on("mouseenter", function () {
                 if (dragging === true) {
                     let positionId = String($(this).data("positionId"));
                     new TableCel(positionId).select();
                     table.variable_update();
                     console.log(selected);
                 }
-            })*/
-            $("td").on("pointerenter", function (event) {
+            })
+            $("td").on("touchmove", function (event) {
                 if (dragging === true) {
-                    let target = $(document.elementFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY));
-                    if (target.hasClass("enter")) {
+                    let target = $(document.elementFromPoint(event.clientX, event.clientY));
+                    dragging_elements.push(String(target.data("positionId")))
 
-                    } else {
-                        if ($(".enter").length >= 1) {
-                            $("td").removeClass("enter")
-                        }
-                        target.addClass("enter")
-
-                        let positionId = String(target.data("positionId"))
-                        new TableCel(positionId).select()
-                        table.variable_update()
-                        console.log(selected)
+                    if (dragging_elements[dragging_elements.length - 1] != dragging_elements[dragging_elements.length - 2]) {
+                        let positionId = String(target.data("positionId"));
+                        new TableCel(positionId).select();
+                        table.variable_update();
                     }
+
                 }
             })
 
             $("td").on("pointerup", function () {
                 dragging = false
+                let dragging_elements = []
                 if ($(this).hasClass("goal")) {
                     table.goal()
                 } else {
