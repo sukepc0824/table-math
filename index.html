@@ -292,7 +292,7 @@
                     }
                 }
             }
-
+            const audio = new Audio('sound/select.mp3');
             class TableCel {
                 constructor(id) {
                     this.id = id
@@ -305,13 +305,14 @@
                         })
                         selected.splice(selected.map(obj => obj.id).indexOf(this.id) + 1)
                     } else {
+                        audio.currentTime = 0;
+                        audio.play()
                         if ($(`td[data-position-id="${this.id}"]`).hasClass("goal")) {
                             selected.push({
                                 id: this.id,
                                 calc_variable: evalCalculation(`${lastSlected().calc_variable}`)
                             })
                         } else {
-                            console.log($(`td[data-position-id="${this.id}"]`).data("calc"))
                             selected.push({
                                 id: this.id,
                                 calc_variable: evalCalculation(`${lastSlected().calc_variable}${$(`td[data-position-id="${this.id}"]`).data("calc")}`)
@@ -333,7 +334,6 @@
                     ['', '*2', '', ''],
                 ], 5
             )
-
             table.create()
 
             let dragging;
