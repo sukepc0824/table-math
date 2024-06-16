@@ -345,12 +345,25 @@
 
                 }
             })
-            $("td").on("mouseenter", function () {
+            /*$("td").on("mouseenter", function () {
                 if (dragging === true) {
                     let positionId = String($(this).data("positionId"));
                     new TableCel(positionId).select();
                     table.variable_update();
                     console.log(selected);
+                }
+            })*/
+            $("td").on("mousemove", function (event) {
+                if (dragging === true) {
+                    let target = $(document.elementFromPoint(event.clientX, event.clientY));
+                    dragging_elements.push(String(target.data("positionId")))
+
+                    if (dragging_elements[dragging_elements.length - 1] != dragging_elements[dragging_elements.length - 2]) {
+                        let positionId = String(target.data("positionId"));
+                        new TableCel(positionId).select();
+                        table.variable_update();
+                    }
+
                 }
             })
             $("td").on("touchmove", function (event) {
@@ -367,10 +380,20 @@
                 }
             })
 
-            $("td").on("pointerup", function () {
+            $("td").on("mouseup", function () {
                 dragging = false
                 let dragging_elements = []
                 if ($(this).hasClass("goal")) {
+                    table.goal()
+                } else {
+                    table.reset()
+                }
+            })
+            $("td").on("touchend", function () {
+                dragging = false
+                let dragging_elements = []
+                let target = $(document.elementFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY));
+                if (target.hasClass("goal")) {
                     table.goal()
                 } else {
                     table.reset()
