@@ -78,13 +78,20 @@
 
         .dialog-menu button:hover {
             filter: brightness(0%);
-        }
+        }   
 
         .show-panel {
+            width: 340px;
             height: fit-content;
             flex-grow: 1;
             display: flex;
-            align-items: center;
+            align-items: end;
+            justify-content: end;
+            color: #444;
+            font-size: 66px;
+            font-weight: 400;
+            margin-bottom: 20px;
+            text-align: right;
         }
 
         .action {
@@ -98,14 +105,7 @@
         table {
             margin: auto;
             border-collapse: collapse;
-            margin-bottom: 42px;
-        }
-
-        .show-panel {
-            font-size: 66px;
-            font-weight: 400;
-            margin-bottom: 20px;
-            text-align: center;
+            margin-bottom: 62px;
         }
 
         .show-panel span {
@@ -186,19 +186,19 @@
             }
 
             10% {
-                transform: translateX(-30px);
+                transform: translateX(-20px);
             }
 
             22% {
-                transform: translateX(30px);
+                transform: translateX(16px);
             }
 
             30% {
-                transform: translateX(-15px);
+                transform: translateX(-10px);
             }
 
             40% {
-                transform: translateX(15px);
+                transform: translateX(10px);
             }
 
             50% {
