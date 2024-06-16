@@ -192,6 +192,9 @@
 </head>
 
 <body>
+    <audio class="select" preload=”auto”>
+        <source src="sounds/select.mp3" type="audio/mp3">
+    </audio>
     <table>
         <caption>
             <span>0</span>
@@ -292,7 +295,6 @@
                     }
                 }
             }
-            const audio = new Audio('sound/select.mp3');
             class TableCel {
                 constructor(id) {
                     this.id = id
@@ -305,8 +307,8 @@
                         })
                         selected.splice(selected.map(obj => obj.id).indexOf(this.id) + 1)
                     } else {
-                        audio.currentTime = 0;
-                        audio.play()
+                        $("audio.select").get(0).currentTime = 0;
+                        $("audio.select").get(0).play()
                         if ($(`td[data-position-id="${this.id}"]`).hasClass("goal")) {
                             selected.push({
                                 id: this.id,
