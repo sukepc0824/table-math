@@ -355,7 +355,7 @@
             })
             $("td").on("touchmove", function (event) {
                 if (dragging === true) {
-                    let target = $(document.elementFromPoint(event.clientX, event.clientY));
+                    let target = $(document.elementFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY));
                     dragging_elements.push(String(target.data("positionId")))
 
                     if (dragging_elements[dragging_elements.length - 1] != dragging_elements[dragging_elements.length - 2]) {
