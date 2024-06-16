@@ -278,6 +278,7 @@
                 }
 
                 fail() {
+                    window.navigator.vibrate(100);
                     $("td").removeClass("select")
                     $("table caption").addClass("fail")
                     setTimeout(() => {
