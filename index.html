@@ -350,7 +350,7 @@
                     console.log(selected);
                 }
             })*/
-            $("td").on("touchmove", function (event) {
+            $("td").on("pointerenter", function (event) {
                 if (dragging === true) {
                     let target = $(document.elementFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY));
                     if (target.hasClass("enter")) {
