@@ -496,7 +496,7 @@
                     }
                     event.preventDefault()
                 }
-            })
+            }, { passive: false })
 
             $(document).on("mouseup", "td", function () {
                 dragging = false
