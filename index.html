@@ -523,9 +523,8 @@
                         new TableCel(positionId).select();
                         table.variable_update();
                     }
-                    event.preventDefault()
                 }
-            }, { passive: false })
+            })
 
             $(document).on("mouseup", "td", function () {
                 dragging = false
