@@ -255,7 +255,8 @@
                 left: 50%;
                 letter-spacing: 3px;
                 font-size: 26px;
-                color: #aaa;
+                color: #000000;
+                opacity: 0.3;
                 text-align: center;
                 transform: translate(-50%, -50%);
                 pointer-events: none;
@@ -275,6 +276,18 @@
 
             td.goal::before {
                 background-color: #dcdcdc;
+            }
+
+            td.start::after {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 18px;
+                height: 18px;
+                border-radius: 40px;
+                background-color: #ff8000;
             }
 
             td.select:before {
@@ -369,6 +382,7 @@
                     return { calc_variable: 0 }
                 }
             }
+
             class Table {
                 constructor(table_data, goal_value) {
                     this.table_data = table_data
@@ -390,6 +404,11 @@
                             if (value.includes("=")) {
                                 $(`td[data-calc="${value}"]`).addClass('goal')
                                 this.goal_value = value.replace("=", "")
+                            }
+                            if (value.includes("s")) {
+                                $(`td[data-calc="${value}"]`).addClass('start')
+                                $(`td[data-calc="${value}"] p`).text("")
+                                $(`td[data-calc="${value}"]`).data("calc","")
                             }
                         })
                     })
@@ -438,7 +457,6 @@
                 }
 
                 fail() {
-                    window.navigator.vibrate(100);
                     $("td").removeClass("select")
                     $(".show-panel").addClass("fail")
                     setTimeout(() => {
@@ -446,6 +464,7 @@
                     }, 500);
                     this.variable_update(true)
                     selected = []
+                    window.navigator.vibrate(100);
                 }
 
                 goal() {
@@ -493,11 +512,10 @@
             let dragging;
             let dragging_elements = []
             $(document).on("pointerdown", "td", function () {
-                if ($(this).data("positionId") === '00') {
-                    dragging_elements.push("00")
-                    new TableCel("00").select();
+                if ($(this).hasClass("start")) {
+                    dragging_elements.push($(this).data("positionId"))
+                    new TableCel($(this).data("positionId")).select();
                     dragging = true
-
                 }
             })
             $(document).on("mousemove", "td", function (event) {
